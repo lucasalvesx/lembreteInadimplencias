@@ -10,7 +10,7 @@ email_remetente = "comunicado@micdigital.com.br"
 senha = "####"
 
 # linking excel sheet
-clientes_df = pd.read_excel("clientesInadimplencia.xls")
+clientes_df = pd.read_excel("clientesInadimplencia.xlsx")
 
 # function for sending messages
 def enviar_email(cliente_email, cliente_nome):
