@@ -7,15 +7,15 @@ Dispara emails para uma lista de destinatários identificados como inadimplentes
 Facilita a comunicação com clientes.
 
 ### Como os usuários podem começar a usar o projeto
-Working on it, but basically:
-- You must have Python installed on your PC
-On Windows:
-- Copy this repo's URL;
-- Go on File Explorer and choose a path to clone this project into;
-- Open the terminal and type
-`git clone https://github.com/lucasalvesx/lembreteInadimplencias`
-`cd ./lembreteInadimplencias`
-`python main.py`
+Working on it, but basically:  
+- You must have Python installed on your PC  
+On Windows:  
+- Copy this repo's URL;  
+- Go on File Explorer and choose a path to clone this project into;  
+- Open the terminal and type  
+`git clone https://github.com/lucasalvesx/lembreteInadimplencias`  
+`cd ./lembreteInadimplencias`  
+`python main.py`  
 
 ### Onde os usuários podem obter ajuda com seu projeto
 Reach me on Linkedin.
