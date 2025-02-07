@@ -18,7 +18,7 @@ if not USER_EMAIL or not USER_PASSWORD:
 try:
     df = pd.read_excel(".\clientesInadimplencia.xlsx")
 except Exception as e:
-    print(f"Erro ao ler arquivo Excel: {e}. S enecessário contatao programador do sistema.")
+    print(f"Erro ao ler arquivo Excel: {e}. Se necessário contatar o programador do sistema.")
     exit()
 
 #checking if row exists
