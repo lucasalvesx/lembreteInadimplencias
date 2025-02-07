@@ -10,6 +10,8 @@ Facilita a comunicação com clientes.
 Working on it, but basically:  
 - You must have Python installed on your PC  
 On Windows:  
+- Install needed dependencies  
+`pip install pandas yagmail python-dotenv time`
 - Copy this repo's URL;  
 - Go on File Explorer and choose a path to clone this project into;  
 - Open the terminal and type  
