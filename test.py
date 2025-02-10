@@ -10,9 +10,11 @@ load_dotenv(dotenv_path="./.env")
 USER_EMAIL = os.getenv("USER_EMAIL")
 USER_PASSWORD = os.getenv("USER_PASSWORD")
 IMAP_SERVER = os.getenv("IMAP_SERVER")
-SMTP_SERVER = os.getenv("SMPTP_SERVER")
+SMTP_SERVER = os.getenv("SMTP_SERVER")
 IMAP_PORT = os.getenv("IMAP_PORT")
-SMTP_PORT = os.getenv("SMTP_PORT")
+SMTP_PORT = int(os.getenv("SMTP_PORT"))#converting datatype for int
+SMTP_SSL = os.getenv("SMTP_SSL") == "True"
+
 
 #handling errors in credentials importing
 if not USER_EMAIL or not USER_PASSWORD:
@@ -39,7 +41,7 @@ print(ListaDestinatarios)
 
 #configurando autenticações:
 try:
-    yag = yagmail.SMTP(user=USER_EMAIL, password=USER_PASSWORD, host=SMTP_SERVER, port=SMTP_PORT)
+    yag = yagmail.SMTP(user=USER_EMAIL, password=USER_PASSWORD, host=SMTP_SERVER, port=SMTP_PORT, smtp_ssl=SMTP_SSL)
 except Exception as e:
     print(f"Erro ao logar no email: {e}")
     exit()
