@@ -49,7 +49,7 @@ except Exception as e:
 #nao havendo erros, enviar email
 try:
     yag.send(
-    bcc = ListaDestinatarios
+    bcc = ListaDestinatarios,
     subject = 'Lembrete pagamento honorários',
     contents = 'Lembramos que consta um pagamento em aberto' 
     )
