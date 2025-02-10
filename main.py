@@ -1,44 +1,77 @@
-# import smtplib
-# import pandas as pd
-# from email.mime.text import MIMEText
-# from email.mime.multipart import MIMEMultipart
+#importing libs
+import pandas as pd
+import yagmail 
+import time
+import os
+from dotenv import load_dotenv
 
-# # smtp config
-# smtp_server = "scca2.icloudzinc.com"
-# smtp_port = 465
-# email_remetente = "comunicado@micdigital.com.br"
-# senha = "####"
+#loading environment variables (credentials stored in .env file)
+load_dotenv(dotenv_path="./.env")
+USER_EMAIL = os.getenv("USER_EMAIL")
+USER_PASSWORD = os.getenv("USER_PASSWORD")
+IMAP_SERVER = os.getenv("IMAP_SERVER")
+SMTP_SERVER = os.getenv("SMTP_SERVER")
+IMAP_PORT = os.getenv("IMAP_PORT")
+SMTP_PORT = int(os.getenv("SMTP_PORT"))#converting datatype for int
+SMTP_SSL = os.getenv("SMTP_SSL") == "True"
 
-# # linking excel sheet
-# clientes_df = pd.read_excel("clientesInadimplencia.xlsx")
 
-# # function for sending messages
-# def enviar_email(cliente_email, cliente_nome):
-#     assunto = "Lembrete pagto honorários"
-#     corpo = f"""
-#     Olá, cliente {cliente_nome},
-#      Gostaríamos de lembrá-lo(a) que o pagamento dos honorários devidos ainda não foi efetuado.
-#     Pedimos que regularize sua pendência o mais breve possível para evitar a interrupção dos serviços.
+#handling errors in credentials importing
+if not USER_EMAIL or not USER_PASSWORD:
+    print("Erro ao importar credenciais de email. Fale com o programador do sistema.")
+    exit()
 
-#     Atenciosamente,
-#     MIC Contabilidade Digital
-#     """
+#reading excel file with pandas
+try:
+    df = pd.read_excel("./clientesInadimplencia.xlsx")
+except Exception as e:
+    print(f"Erro ao ler arquivo Excel: {e}. Se necessário contatar o programador do sistema.")
+    exit() ##WORKS UNTIL HERE
+
+#checking if row exists
+if "email" not in df.columns:
+    print("Coluna 'email' não encontrada no arquivo Excel. Favor verificar o arquivo.")
+    exit()
     
-#     msg = MIMEMultipart()
-#     msg['From'] = email_remetente
-#     msg['To'] = cliente_email
-#     msg['Subject'] = assunto
-#     msg.attach(MIMEText(corpo, 'plain'))
+#extracting list of emails
+ListaDestinatarios = df["email"].tolist()
+print(ListaDestinatarios)
+
+#Enviar email com yagmail
+
+#configurando autenticações:
+try:
+    yag = yagmail.SMTP(user=USER_EMAIL, password=USER_PASSWORD, host=SMTP_SERVER, port=SMTP_PORT, smtp_ssl=SMTP_SSL)
+    yag.connect()
+except Exception as e:
+    print(f"Erro ao logar no email: {e}")
+    exit()
+#nao havendo erros, enviar email
+try:
+    yag.send(
+    bcc = ListaDestinatarios,
+    subject = 'Lembrete pagamento honorários',
+    contents = 'Lembramos que consta um pagamento em aberto' 
+    )
+    print("Emails enviados com sucesso!")
+except Exception as e:
+    print(f"Erro ao enviar email: {e}")
     
-#     try:
-#         with smtplib.SMTP(smtp_server, smtp_port) as server:
-#             server.starttls()
-#             server.login(email_remetente, senha)
-#             server.sendmail(email_remetente, cliente_email, msg.as_sring())
-#             print(f"Enviado para {cliente_nome} ({cliente_email})")
-#     except Exception as e:
-#         print(f"Erro ao enviar e-mail para {cliente_nome}: {e}")
-        
-# # iterar na lista de clientes e executar funçao de envio
-# for _, cliente in clientes_df.iterrows():
-#     enviar_email(cliente['email'], cliente['nome'])
+# setting batch size (amount of emails sent at a time):
+batch_size = 100
+
+#sending in batches
+for i in range(0, len(ListaDestinatarios), batch_size):
+    batch = ListaDestinatarios[i:i + batch_size]
+    try:
+        yag.send(
+            bcc=batch,
+            subject='Lembrete pagamento honorários',
+            contents='Lembramos que consta um pagamento em aberto'
+        )
+        print(f"Emails enviados com sucesso para o lote {i // batch_size + 1}")
+        time.sleep(3)  # Pausa de 3 segundos entre os envios dos batches
+    except Exception as e:
+        print(f"Erro ao enviar email para o lote {i // batch_size + 1}: {e}")
+
+print("Envio de emails finalizado com sucesso!")
