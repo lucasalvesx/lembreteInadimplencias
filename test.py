@@ -6,9 +6,13 @@ import os
 from dotenv import load_dotenv
 
 #loading environment variables (credentials stored in .env file)
-load_dotenv(dotenv_path="./clientesInadimplencia.xlsx")
+load_dotenv(dotenv_path="./.env")
 USER_EMAIL = os.getenv("USER_EMAIL")
 USER_PASSWORD = os.getenv("USER_PASSWORD")
+IMAP_SERVER = os.getenv("IMAP_SERVER")
+SMTP_SERVER = os.getenv("SMPTP_SERVER")
+IMAP_PORT = os.getenv("IMAP_PORT")
+SMTP_PORT = os.getenv("SMTP_PORT")
 
 #handling errors in credentials importing
 if not USER_EMAIL or not USER_PASSWORD:
@@ -17,10 +21,10 @@ if not USER_EMAIL or not USER_PASSWORD:
 
 #reading excel file with pandas
 try:
-    df = pd.read_excel(".\clientesInadimplencia.xlsx")
+    df = pd.read_excel("./clientesInadimplencia.xlsx")
 except Exception as e:
     print(f"Erro ao ler arquivo Excel: {e}. Se necessário contatar o programador do sistema.")
-    exit()
+    exit() ##WORKS UNTIL HERE
 
 #checking if row exists
 if "email" not in df.columns:
@@ -35,7 +39,7 @@ print(ListaDestinatarios)
 
 #configurando autenticações:
 try:
-    yag = yagmail.SMTP(USER_EMAIL, USER_PASSWORD)
+    yag = yagmail.SMTP(user=USER_EMAIL, password=USER_PASSWORD, host=SMTP_SERVER, port=SMTP_PORT)
 except Exception as e:
     print(f"Erro ao logar no email: {e}")
     exit()
