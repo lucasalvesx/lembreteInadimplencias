@@ -65,7 +65,7 @@ for i in range(0, len(ListaDestinatarios), batch_size):
     batch = ListaDestinatarios[i:i + batch_size]
     try:
         yag.send(
-            to=batch,
+            bcc=batch,
             subject='Lembrete pagamento honorários',
             contents='Lembramos que consta um pagamento em aberto'
         )
