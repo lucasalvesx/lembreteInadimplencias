@@ -19,7 +19,7 @@ On Windows:
 `cd ./lembreteInadimplencias`  
 `python main.py`  
 
-###Where users can get help
+### Where users can get help  
 Reach me on Linkedin, I'll certainly reply.
 
 ### Quem mantém e contribui com o projeto
