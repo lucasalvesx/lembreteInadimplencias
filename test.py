@@ -42,13 +42,14 @@ print(ListaDestinatarios)
 #configurando autenticações:
 try:
     yag = yagmail.SMTP(user=USER_EMAIL, password=USER_PASSWORD, host=SMTP_SERVER, port=SMTP_PORT, smtp_ssl=SMTP_SSL)
+    yag.connect()
 except Exception as e:
     print(f"Erro ao logar no email: {e}")
     exit()
 #nao havendo erros, enviar email
 try:
     yag.send(
-    to = ListaDestinatarios,
+    bcc = ListaDestinatarios
     subject = 'Lembrete pagamento honorários',
     contents = 'Lembramos que consta um pagamento em aberto' 
     )
