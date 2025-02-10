@@ -1,3 +1,9 @@
+# ------------------------------------------------------------------
+# Autor: Lucas Alves
+# Data: 02/2025
+# ------------------------------------------------------------------
+
+
 #importing libs
 import pandas as pd
 import yagmail 
@@ -70,7 +76,7 @@ for i in range(0, len(ListaDestinatarios), batch_size):
             contents='Lembramos que consta um pagamento em aberto'
         )
         print(f"Emails enviados com sucesso para o lote {i // batch_size + 1}")
-        time.sleep(3)  # Pausa de 3 segundos entre os envios dos batches
+        time.sleep(3)  # Pausa de 3 segundos entre os envios às batches
     except Exception as e:
         print(f"Erro ao enviar email para o lote {i // batch_size + 1}: {e}")
 
