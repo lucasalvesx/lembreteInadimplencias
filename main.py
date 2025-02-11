@@ -48,7 +48,6 @@ print(ListaDestinatarios)
 #configurando autenticações:
 try:
     yag = yagmail.SMTP(user=USER_EMAIL, password=USER_PASSWORD, host=SMTP_SERVER, port=SMTP_PORT, smtp_ssl=SMTP_SSL)
-    yag.connect()
 except Exception as e:
     print(f"Erro ao logar no email: {e}")
     exit()
@@ -57,7 +56,7 @@ try:
     yag.send(
     bcc = ListaDestinatarios,
     subject = 'Lembrete pagamento honorários',
-    contents = 'Lembramos que consta um pagamento em aberto' 
+    contents = 'Você está recebendo essa mensagem como teste. O sistema está próximo de ser implementado.' 
     )
     print("Emails enviados com sucesso!")
 except Exception as e:
@@ -71,7 +70,8 @@ for i in range(0, len(ListaDestinatarios), batch_size):
     batch = ListaDestinatarios[i:i + batch_size]
     try:
         yag.send(
-            bcc=batch,
+            cc = 'financeiro2@micdigital.com.br',
+            bcc= batch,
             subject='Lembrete pagamento honorários',
             contents='Lembramos que consta um pagamento em aberto'
         )
