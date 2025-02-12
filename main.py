@@ -52,17 +52,8 @@ except Exception as e:
     print(f"Erro ao logar no email: {e}")
     exit()
 #nao havendo erros, enviar email
-try:
-    yag.send(
-    bcc = ListaDestinatarios,
-    subject = 'Lembrete pagamento honorários',
-    contents = 'Você está recebendo essa mensagem como teste. O sistema está próximo de ser implementado.' 
-    )
-    print("Emails enviados com sucesso!")
-except Exception as e:
-    print(f"Erro ao enviar email: {e}")
     
-# setting batch size (amount of emails sent at a time):
+# setting batch size (amount of emails sent at a time to avoid crashings):
 batch_size = 100
 
 #sending in batches
@@ -73,7 +64,7 @@ for i in range(0, len(ListaDestinatarios), batch_size):
             cc = 'financeiro2@micdigital.com.br',
             bcc= batch,
             subject='Lembrete pagamento honorários',
-            contents='Lembramos que consta um pagamento em aberto'
+            contents = 'Você está recebendo essa mensagem como teste. O sistema está próximo de ser implementado.'
         )
         print(f"Emails enviados com sucesso para o lote {i // batch_size + 1}")
         time.sleep(3)  # Pausa de 3 segundos entre os envios às batches
