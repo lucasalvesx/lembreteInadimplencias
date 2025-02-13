@@ -62,17 +62,18 @@ def enviar_emails(listaDestinatarios, subject, content):
 #sending emails in batches
     for i in range(0, len(listaDestinatarios), batch_size):
         batch = listaDestinatarios[i:i + batch_size]
-    try:
-        yag.send(
-            cc = 'financeiro2@micdigital.com.br',
-            bcc= batch,
-            subject='Teste de implementação MIC',
-            contents = 'Você está recebendo essa mensagem como teste. O sistema está próximo de ser implementado.'
-        )
-        print(f"Emails enviados com sucesso para o lote {i // batch_size + 1}")
-        time.sleep(3)  # Pausa de 3 segundos entre os envios às batches
-    except Exception as e:
-        print(f"Erro ao enviar email para o lote {i // batch_size + 1}: {e}")
+        
+        try: 
+            yag.send(
+                cc='financeiro2@micdigital.com.br',
+                bcc=batch,
+                subject=subject,
+                contents=content
+            )
+            print(f"Emails enviados com sucesso para o lote {i // batch_size + 1}")
+            time.sleep(3)  # Pausa de 3 segundos entre os envios às batches
+        except Exception as e:
+            print(f"Erro ao enviar email para o lote {i // batch_size + 1}: {e}")
 
 #sending reminder email
 print("Enviando lembretes...")
