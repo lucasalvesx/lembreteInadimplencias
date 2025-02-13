@@ -55,13 +55,13 @@ def enviar_emails(listaDestinatarios, subject, content):
         yag = yagmail.SMTP(user=USER_EMAIL, password=USER_PASSWORD, host=SMTP_SERVER, port=SMTP_PORT, smtp_ssl=SMTP_SSL)
     except Exception as e:
         print(f"Erro ao logar no email: {e}")
-        exit()
+        return
         
-batch_size = 100 # setting batch size (amount of emails sent at a time to avoid crashings):
+    batch_size = 100 # setting batch size (amount of emails sent at a time to avoid crashings):
 
 #sending emails in batches
-for i in range(0, len(ListaDestinatarios), batch_size):
-    batch = ListaDestinatarios[i:i + batch_size]
+    for i in range(0, len(listaDestinatarios), batch_size):
+        batch = listaDestinatarios[i:i + batch_size]
     try:
         yag.send(
             cc = 'financeiro2@micdigital.com.br',
