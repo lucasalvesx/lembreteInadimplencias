@@ -21,7 +21,6 @@ IMAP_PORT = os.getenv("IMAP_PORT")
 SMTP_PORT = int(os.getenv("SMTP_PORT"))#converting datatype for int
 SMTP_SSL = os.getenv("SMTP_SSL") == "True"
 
-
 #handling errors in credentials importing
 if not USER_EMAIL or not USER_PASSWORD:
     print("Erro ao importar credenciais de email. Fale com o programador do sistema.")
@@ -29,46 +28,60 @@ if not USER_EMAIL or not USER_PASSWORD:
 
 #reading excel file with pandas
 try:
-    df = pd.read_excel("./clientesInadimplencia.xlsx")
+    df_lembrete = pd.read_excel("./clientesInadimplencia.xlsx", sheet_name="Lembrete")
+    df_cobranca = pd.read_excel("./clientesInadimplencia.xlsx", sheet_name="Cobranca")
 except Exception as e:
     print(f"Erro ao ler arquivo Excel: {e}. Se necessário contatar o programador do sistema.")
-    exit() ##WORKS UNTIL HERE
+    exit() 
 
-#checking if row exists
-if "email" not in df.columns:
+#checking if email row exists in both sheets
+if "email" not in df_lembrete.columns or "email" not in df_cobranca.columns:
     print("Coluna 'email' não encontrada no arquivo Excel. Favor verificar o arquivo.")
     exit()
     
 #extracting list of emails
-ListaDestinatarios = df["email"].tolist()
-print(ListaDestinatarios)
+envio_lembretes = df_lembrete["email"].dropna().tolist()
+envio_cobranca = df_cobranca["email"].dropna().tolist()
 
-#Enviar email com yagmail
-
-#configurando autenticações:
-try:
-    yag = yagmail.SMTP(user=USER_EMAIL, password=USER_PASSWORD, host=SMTP_SERVER, port=SMTP_PORT, smtp_ssl=SMTP_SSL)
-except Exception as e:
-    print(f"Erro ao logar no email: {e}")
-    exit()
-#nao havendo erros, enviar email
+#declaring BUT NOT CALLING function to send emails (used further)   
+def enviar_emails(listaDestinatarios, subject, content):
+    #checking if email row exists in both sheets
+    if not listaDestinatarios:
+        print("Nenhum endereço encontrado")
+        return
     
-# setting batch size (amount of emails sent at a time to avoid crashings):
-batch_size = 100
+    #configurando autenticaçoes (login do email destinatario)
+    try:
+        yag = yagmail.SMTP(user=USER_EMAIL, password=USER_PASSWORD, host=SMTP_SERVER, port=SMTP_PORT, smtp_ssl=SMTP_SSL)
+    except Exception as e:
+        print(f"Erro ao logar no email: {e}")
+        exit()
+        
+batch_size = 100 # setting batch size (amount of emails sent at a time to avoid crashings):
 
-#sending in batches
+#sending emails in batches
 for i in range(0, len(ListaDestinatarios), batch_size):
     batch = ListaDestinatarios[i:i + batch_size]
     try:
         yag.send(
             cc = 'financeiro2@micdigital.com.br',
             bcc= batch,
-            subject='Lembrete pagamento honorários',
+            subject='Teste de implementação MIC',
             contents = 'Você está recebendo essa mensagem como teste. O sistema está próximo de ser implementado.'
         )
         print(f"Emails enviados com sucesso para o lote {i // batch_size + 1}")
         time.sleep(3)  # Pausa de 3 segundos entre os envios às batches
     except Exception as e:
         print(f"Erro ao enviar email para o lote {i // batch_size + 1}: {e}")
+
+#sending reminder email
+print("Enviando lembretes...")
+enviar_emails(envio_lembretes, "Lembrete de vencimento", "Cliente, lembramos do vencimento")
+
+#sending expired payment email 
+print("Enviando cobranças...")
+enviar_emails(envio_cobranca, "Pagamento vencido", "Cliente, seu pagamento consta em atraso.")
+
+## end function
 
 print("Envio de emails finalizado com sucesso!")
