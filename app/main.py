@@ -27,9 +27,9 @@ label.pack()
 #function for file dialog(insert files by browsing on user local pc)
 def browse_file():
     """Faça o upload do arquivo desejado."""
-    file_path = filedialog.askopenfilename(
+    file_path = filedialog.askopenfilename (
         title="Selecione o arquivo Excel",
-        filetypes=(("Excel files", "*.xlsx")
+        filetypes=(("Excel files", "*.xlsx"))
     )
     print(f"Arquvio selecionado {file_path}")
     return file_path
