@@ -65,7 +65,7 @@ def enviar_emails(listaDestinatarios, subject, content):
         
         try: 
             yag.send(
-                cc='financeiro2@micdigital.com.br',
+                cc='USER_EMAIL',
                 bcc=batch,
                 subject=subject,
                 contents=content
