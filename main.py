@@ -77,11 +77,11 @@ def enviar_emails(listaDestinatarios, subject, content):
 
 #sending reminder email
 print("Enviando lembretes...")
-enviar_emails(envio_lembretes, "Lembrete de vencimento", "Cliente, lembramos do vencimento")
+enviar_emails(envio_lembretes, "Lembrete de vencimento", "TESTE SISTEMA - Cliente, lembramos do vencimento")
 
 #sending expired payment email 
 print("Enviando cobranças...")
-enviar_emails(envio_cobranca, "Pagamento vencido", "Cliente, seu pagamento consta em atraso.")
+enviar_emails(envio_cobranca, "Pagamento vencido", "TESTE SISTEMA - Cliente, seu pagamento consta em atraso.")
 
 ## end function
 
