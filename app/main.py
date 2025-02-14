@@ -10,6 +10,33 @@ import yagmail
 import time
 import os
 from dotenv import load_dotenv
+import tkinter as tk #native module for GUI
+from tkinter import filedialog #module for file dialog
+
+#creating GUI window
+root = tk.Tk()
+root.title("Enviar mensagens")
+root.geometry("300x200")
+#runnng tkinter main loop
+root.mainloop()
+
+# Add instructions label
+label = tk.Label(root, text="Por favor, selecione o arquivo Excel com os dados.", padx=10, pady=10)
+label.pack()
+
+#function for file dialog(insert files by browsing on user local pc)
+def browse_file():
+    """Faça o upload do arquivo desejado."""
+    file_path = filedialog.askopenfilename(
+        title="Selecione o arquivo Excel",
+        filetypes=(("Excel files", "*.xlsx")
+    )
+    print(f"Arquvio selecionado {file_path}")
+    return file_path
+    
+# Add a button to insert
+select_button = tk.Button(root, text="Selecionar Arquivo Excel", command=select_excel_file)
+select_button.pack(padx=10, pady=10)
 
 #loading environment variables (credentials stored in .env file)
 load_dotenv(dotenv_path="./app/.env")
@@ -34,11 +61,6 @@ except Exception as e:
     print(f"Erro ao ler arquivo Excel: {e}. Se necessário contatar o programador do sistema.")
     exit() 
 
-#checking if email row exists in both sheets
-if "email" not in df_lembrete.columns or "email" not in df_cobranca.columns:
-    print("Coluna 'email' não encontrada no arquivo Excel. Favor verificar o arquivo.")
-    exit()
-    
 #extracting list of emails
 envio_lembretes = df_lembrete["email"].dropna().tolist()
 envio_cobranca = df_cobranca["email"].dropna().tolist()
@@ -60,8 +82,8 @@ def enviar_emails(listaDestinatarios, subject, content):
     batch_size = 100 # setting batch size (amount of emails sent at a time to avoid crashings):
 
 #sending emails in batches
-    for i in range(0, len(listaDestinatarios), batch_size):
-        batch = listaDestinatarios[i:i + batch_size]
+    for i in range(0, len(listaDestinatarios), batch_size): #iterates over read list of emails
+        batch = listaDestinatarios[i:i + batch_size] #slices list and sets batch value 
         
         try: 
             yag.send(
@@ -71,7 +93,7 @@ def enviar_emails(listaDestinatarios, subject, content):
                 contents=content
             )
             print(f"Emails enviados com sucesso para o lote {i // batch_size + 1}")
-            time.sleep(3)  # Pausa de 3 segundos entre os envios às batches
+            time.sleep(3)  # waits 3 seconds to start sending for the next batch
         except Exception as e:
             print(f"Erro ao enviar email para o lote {i // batch_size + 1}: {e}")
 
