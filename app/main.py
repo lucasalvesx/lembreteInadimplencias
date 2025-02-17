@@ -35,8 +35,18 @@ def browse_file():
     return file_path
     
 # Add a button to insert
-select_button = tk.Button(root, text="Selecionar Arquivo Excel", command=select_excel_file)
+select_button = tk.Button(root, text="Selecionar Arquivo Excel", command={browse_file})
 select_button.pack(padx=10, pady=10)
+
+#function for files processing
+def process_file(file_path):
+    """Processa o arquivo Excel."""
+    try:
+        df_lembrete = pd.read_excel(file_path, sheet_name="Lembrete")
+        df_cobranca = pd.read_excel(file_path, sheet_name="Cobranca")
+    except Exception as e:
+        print(f"Erro ao ler arquivo Excel: {e}. Se necessário contatar o programador do sistema.")
+    return df_lembrete, df_cobranca
 
 #loading environment variables (credentials stored in .env file)
 load_dotenv(dotenv_path="./app/.env")
