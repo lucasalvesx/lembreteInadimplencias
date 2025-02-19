@@ -3,7 +3,6 @@
 # Data: 02/2025
 # ------------------------------------------------------------------
 
-
 #importing libs
 import pandas as pd
 import yagmail 
@@ -13,42 +12,11 @@ from dotenv import load_dotenv
 import tkinter as tk #native module for GUI
 from tkinter import filedialog #module for file dialog
 
-#creating GUI window
-root = tk.Tk()
-root.title("Enviar mensagens")
-root.geometry("300x200")
-#runnng tkinter main loop
-root.mainloop()
+# Global variables for storing dataframes
+df_lembrete = None
+df_cobranca = None
 
-# Add instructions label
-label = tk.Label(root, text="Por favor, selecione o arquivo Excel com os dados.", padx=10, pady=10)
-label.pack()
-
-#function for file dialog(insert files by browsing on user local pc)
-def browse_file():
-    """Faça o upload do arquivo desejado."""
-    file_path = filedialog.askopenfilename (
-        title="Selecione o arquivo Excel",
-        filetypes=(("Excel files", "*.xlsx"))
-    )
-    print(f"Arquvio selecionado {file_path}")
-    return file_path
-    
-# Add a button to insert
-select_button = tk.Button(root, text="Selecionar Arquivo Excel", command={browse_file})
-select_button.pack(padx=10, pady=10)
-
-#function for files processing
-def process_file(file_path):
-    """Processa o arquivo Excel."""
-    try:
-        df_lembrete = pd.read_excel(file_path, sheet_name="Lembrete")
-        df_cobranca = pd.read_excel(file_path, sheet_name="Cobranca")
-    except Exception as e:
-        print(f"Erro ao ler arquivo Excel: {e}. Se necessário contatar o programador do sistema.")
-    return df_lembrete, df_cobranca
-
-#loading environment variables (credentials stored in .env file)
+# Loading environment variables (credentials stored in .env file)
 load_dotenv(dotenv_path="./app/.env")
 USER_EMAIL = os.getenv("USER_EMAIL")
 USER_PASSWORD = os.getenv("USER_PASSWORD")
@@ -58,24 +26,37 @@ IMAP_PORT = os.getenv("IMAP_PORT")
 SMTP_PORT = int(os.getenv("SMTP_PORT"))#converting datatype for int
 SMTP_SSL = os.getenv("SMTP_SSL") == "True"
 
-#handling errors in credentials importing
+# Handling errors in credentials importing
 if not USER_EMAIL or not USER_PASSWORD:
     print("Erro ao importar credenciais de email. Fale com o programador do sistema.")
     exit()
+    
+# Function to process selected file
+def process_file(file_path):
+    global df_lembrete, df_cobranca
+    try:
+        df_lembrete = pd.read_excel(file_path, sheet_name="Lembrete")
+        df_cobranca = pd.read_excel(file_path, sheet_name="Cobranca")
+        print("Arquivo lido com sucesso!")
+    except Exception as e:
+        print(f"Erro ao ler o arquivo Excel: {e}")    
+# end function process_file
+          
+# Function to open file dialog and insert files by browsing on user local pc
+def browse_file():
+    """Faça o upload do arquivo desejado."""
+    global enviar_button
+    file_path = filedialog.askopenfilename (
+        title="Selecione o arquivo Excel",
+        filetypes=[("Excel files", "*.xlsx")]
+    )
+    if file_path:
+        label_status.config(text=f"Arquivo selecionado: {file_path}")
+        process_file(file_path)
+        enviar_button.config(state="normal")
+# end function browse_file
 
-#reading excel file with pandas
-try:
-    df_lembrete = pd.read_excel("./app/clientesInadimplencia.xlsx", sheet_name="Lembrete")
-    df_cobranca = pd.read_excel("./app/clientesInadimplencia.xlsx", sheet_name="Cobranca")
-except Exception as e:
-    print(f"Erro ao ler arquivo Excel: {e}. Se necessário contatar o programador do sistema.")
-    exit() 
-
-#extracting list of emails
-envio_lembretes = df_lembrete["email"].dropna().tolist()
-envio_cobranca = df_cobranca["email"].dropna().tolist()
-
-#declaring BUT NOT CALLING function to send emails (used further)   
+# function to send emails  
 def enviar_emails(listaDestinatarios, subject, content):
     #checking if email row exists in both sheets
     if not listaDestinatarios:
@@ -97,7 +78,7 @@ def enviar_emails(listaDestinatarios, subject, content):
         
         try: 
             yag.send(
-                cc='USER_EMAIL',
+                cc=USER_EMAIL,
                 bcc=batch,
                 subject=subject,
                 contents=content
@@ -106,15 +87,68 @@ def enviar_emails(listaDestinatarios, subject, content):
             time.sleep(3)  # waits 3 seconds to start sending for the next batch
         except Exception as e:
             print(f"Erro ao enviar email para o lote {i // batch_size + 1}: {e}")
+## end function enviar_emails
+        
+# Function to send messages
+def enviar_mensagens():
+    global df_lembrete, df_cobranca  
 
-#sending reminder email
-print("Enviando lembretes...")
-enviar_emails(envio_lembretes, "Lembrete de vencimento", "TESTE SISTEMA - Cliente, lembramos do vencimento")
+    if df_lembrete is None or df_cobranca is None:
+        print("Erro: Nenhum arquivo foi carregado.")
+        label_status.config(text="Erro: Nenhum arquivo carregado.", fg="red")
+        return
 
-#sending expired payment email 
-print("Enviando cobranças...")
-enviar_emails(envio_cobranca, "Pagamento vencido", "TESTE SISTEMA - Cliente, seu pagamento consta em atraso.")
+    try:
+        envio_lembretes = df_lembrete["email"].dropna().tolist()
+        envio_cobranca = df_cobranca["email"].dropna().tolist()
 
-## end function
+        print("Enviando lembretes...")
+        enviar_emails(envio_lembretes, "Lembrete de vencimento", "TESTE SISTEMA - Cliente, lembramos do vencimento")
 
-print("Envio de emails finalizado com sucesso!")
+        print("Enviando cobranças...")
+        enviar_emails(envio_cobranca, "Pagamento vencido", "TESTE SISTEMA - Cliente, seu pagamento consta em atraso.")
+
+        print("Envio de emails finalizado com sucesso!")
+        label_status.config(text="Mensagens enviadas com sucesso!", fg="green")
+
+    except Exception as e:
+        print(f"Erro ao enviar mensagens: {e}")
+        label_status.config(text="Erro no envio de mensagens!", fg="red")
+# end function enviar_mensagens
+
+# end of main.py (LOGICAL PART)
+
+# configuring tkinter GUI (widgets)
+root = tk.Tk()
+root.title("Enviar mensagens")
+root.geometry("400x250")
+
+# label for instructions
+label = tk.Label(root, text="Por favor, selecione o arquivo Excel com os dados.", padx=10, pady=10)
+label.pack()
+
+# button to select file 
+select_button = tk.Button(root, text="Selecionar Arquivo Excel", command=browse_file)
+select_button.pack(padx=10, pady=10)
+
+# status for label
+label_status = tk.Label(root, text="", fg="blue")
+label_status.pack()
+
+# confirmation button (unsabled until a file is loaded)
+enviar_button = tk.Button(root, text="Confirmar Envio", command=enviar_mensagens, state="disabled")
+enviar_button.pack(padx=10, pady=10)
+
+# button for quit
+quit_button = tk.Button(root, text="Sair", command=root.quit)
+quit_button.pack(pady=20)
+
+root.mainloop()
+
+# end of GUI configuration
+
+    
+
+
+
+
