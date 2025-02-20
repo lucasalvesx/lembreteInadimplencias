@@ -19,7 +19,7 @@ df_cobranca = None
 # messages stored in constants
 LEMBRETE_SUBJECT = "Lembrete de vencimento"
 LEMBRETE_CONTENT = "TESTE SISTEMA - Cliente, lembramos do vencimento"
-COBRANCA_SUBBJECT = "Pagamento vencido"
+COBRANCA_SUBJECT = "Pagamento vencido"
 COBRANCA_CONTENT = "TESTE SISTEMA - Cliente, seu pagamento consta em atraso."
 
 # Loading environment variables (credentials stored in .env file)
