@@ -16,6 +16,12 @@ from tkinter import filedialog #module for file dialog
 df_lembrete = None
 df_cobranca = None
 
+# messages stored in constants
+LEMBRETE_SUBJECT = "Lembrete de vencimento"
+LEMBRETE_CONTENT = "TESTE SISTEMA - Cliente, lembramos do vencimento"
+COBRANCA_SUBBJECT = "Pagamento vencido"
+COBRANCA_CONTENT = "TESTE SISTEMA - Cliente, seu pagamento consta em atraso."
+
 # Loading environment variables (credentials stored in .env file)
 load_dotenv(dotenv_path="./app/.env")
 USER_EMAIL = os.getenv("USER_EMAIL")
@@ -103,10 +109,10 @@ def enviar_mensagens():
         envio_cobranca = df_cobranca["email"].dropna().tolist()
 
         print("Enviando lembretes...")
-        enviar_emails(envio_lembretes, "Lembrete de vencimento", "TESTE SISTEMA - Cliente, lembramos do vencimento")
+        enviar_emails(envio_lembretes, LEMBRETE_SUBJECT, LEMBRETE_CONTENT)
 
         print("Enviando cobranças...")
-        enviar_emails(envio_cobranca, "Pagamento vencido", "TESTE SISTEMA - Cliente, seu pagamento consta em atraso.")
+        enviar_emails(envio_cobranca, COBRANCA_CONTENT, COBRANCA_CONTENT)
 
         print("Envio de emails finalizado com sucesso!")
         label_status.config(text="Mensagens enviadas com sucesso!", fg="green")
