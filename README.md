@@ -2,6 +2,10 @@
 
 ## Project Overview
 This project reads a list of recipients from an `.xlsx` file and automatically sends emails to the identified contacts.
+This version:  
+- Sends pre-automated message to this list of contacts. 
+- Supports 2 different types of messages and receivers lists (separated by sheet folders).  
+- Stores sender data in .env file.  
 
 ## Why Is This Useful?
 It automates the process of sending reminder and billing emails, reducing the time spent on a previously manual task. This improves productivity and minimizes errors.
