@@ -12,23 +12,12 @@ It automates the process of sending reminder and billing emails, reducing the ti
 - You must have **Python** installed on your computer.
 
 ### Installation on Windows
-
-1. Install the required dependencies by running the following command:  
-   ```bash
-   pip install pandas yagmail python-dotenv
-   ```
-
-2. Clone the repository:  
+1. Clone the repository:  
    ```bash
    git clone https://github.com/lucasalvesx/lembreteInadimplencias  
    cd lembreteInadimplencias
    ```
-
-3. Run the project:  
-   ```bash
-   python main.py
-   ```
-
+   
 ### Where to Get Help
 If you need support or have any questions, feel free to reach out to me on **LinkedIn**. I'll reply as soon as possible.
 
